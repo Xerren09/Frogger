@@ -6,7 +6,7 @@ This was a first year (3rd term final) assignment for OAMK's Object Oriented Bro
 
 The game can be played on this [repository's GitHub Page.](xerren09.github.io/frogger)
 
-##### The goal of the project
+#### The goal of the project
 
 The project's goal was to only recreate the game itself, however since I already had scraps of a videogame engine I decided to finally stitch that together and build the game on it, since it only took a few tweaks of the underlying supporting system to turn them into a separate engine.
 
