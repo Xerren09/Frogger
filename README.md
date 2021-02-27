@@ -4,7 +4,7 @@ Remake of the famous 1981 Konami game, written in JavaScript, built on my simple
 
 This was a first year (3rd term final) assignment for OAMK's Object Oriented Browser Programming University Module.
 
-The game can be played on this [repository's GitHub Page.](xerren09.github.io/frogger)
+The game can be played on this [repository's GitHub Page.](https://xerren09.github.io/Frogger/index.html)
 
 ### The goal of the project
 
