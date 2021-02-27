@@ -66,4 +66,6 @@ h2 {
     flex-wrap: wrap;
     border-width: 5px;
     border-color: darkgrey;
+    width: 85vh;
+    height: 95vh;
 }
