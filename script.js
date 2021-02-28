@@ -9,6 +9,17 @@ var scoreUp = {
     uptime: 0,
     enabled: false
 };
+var playerdeath  = { 
+    active: false,
+    uptime: 0
+}
+var turtleData = {
+    enabled: false,
+    countTilEn: 0,
+    groupID: 0,
+    time: 0,
+    animTag: "turtly_bad"
+}
 
 function Initialize() {
     try {
@@ -39,6 +50,12 @@ function Initialize() {
 }
 
 function Update() {
+    if (turtleData.enabled == false){
+        turtleData.enabled = true;
+        turtleData.countTilEn++;
+        turtleData.time = Math.floor(Math.random() * (20 - 5)) + 5;
+        turtleData.groupID = Math.floor(Math.random() * 2) + 1;
+    }
     // top row logs
     cycleObjAnim(1.7, "x", "+", "log1");
     cycleObjAnim(1.7, "x", "+", "log2");
@@ -94,17 +111,46 @@ function Update() {
         EntityEngine.gameObjectStorage[gameObjectLookUp("scoreup200")][0].x = playerData.x;
         EntityEngine.gameObjectStorage[gameObjectLookUp("scoreup200")][0].y = playerData.y-25;
     }
+    if (((EntityEngine.gameObjectStorage[gameObjectLookUp("turtle4")][0].sprite[1] == 9) || (EntityEngine.gameObjectStorage[gameObjectLookUp("turtle2")][0].sprite[1] == 9)) && turtleData.enabled == true) {
+        turtleData.enabled = false;
+        turtleData.countTilEn = 0;
+        if (turtleData.groupID == 1) {
+            let objID = gameObjectLookUp("turtle4");
+            EntityEngine.gameObjectStorage[objID][0].sprite[0] = "turtlyanim_right";
+            EntityEngine.gameObjectStorage[objID][0].sprite[1] = 0;
+            EntityEngine.gameObjectStorage[objID][0].tag = "turtly";
+            objID = gameObjectLookUp("turtle42");
+            EntityEngine.gameObjectStorage[objID][0].sprite[0] = "turtlyanim_right";
+            EntityEngine.gameObjectStorage[objID][0].sprite[1] = 0;
+            EntityEngine.gameObjectStorage[objID][0].tag = "turtly";
+            objID = gameObjectLookUp("turtle43");
+            EntityEngine.gameObjectStorage[objID][0].sprite[0] = "turtlyanim_right";
+            EntityEngine.gameObjectStorage[objID][0].sprite[1] = 0;
+            EntityEngine.gameObjectStorage[objID][0].tag = "turtly";
+        }
+        else if (turtleData.groupID == 2) {
+            let objID = gameObjectLookUp("turtle2");
+            EntityEngine.gameObjectStorage[objID][0].sprite[0] = "turtlyanim_left";
+            EntityEngine.gameObjectStorage[objID][0].sprite[1] = 0;
+            EntityEngine.gameObjectStorage[objID][0].tag = "turtly";
+            objID = gameObjectLookUp("turtle22");
+            EntityEngine.gameObjectStorage[objID][0].sprite[0] = "turtlyanim_left";
+            EntityEngine.gameObjectStorage[objID][0].sprite[1] = 0;
+            EntityEngine.gameObjectStorage[objID][0].tag = "turtly";
+        }
+        turtleData.groupID = 0;
+    }
 }
 
 function playerCollisionPenalty() {
     EntityEngine.engineExecutionEnabled = false;
+    playerData.spriteIndex = 31;
+    playerdeath.active = true;
     playerData.remainingLives = playerData.remainingLives - 1;
     EntityEngine.gameObjectStorage[gameObjectLookUp("playerlivebar")][0].sizex = playerData.remainingLives * EntityEngine.spriteSheet.tileSize;
-    renderObjects();
-    AwaitEngineExec(500);
-    respawnPlayer();
-    resetTimer();
-    EntityEngine.engineExecutionEnabled = true;
+    renderplayer();
+    //AwaitEngineExec(500);
+    //EntityEngine.engineExecutionEnabled = true;
     if (playerData.remainingLives <= 0) {
         endGameCollapse();
     }
@@ -115,6 +161,7 @@ function LoadGameObjects() {
     //
     addGameObject({ x: 0, y: 50, sizex: EntityEngine.canvas.width, sizey: EntityEngine.canvas.height, tag: "asphalt", sprite: ["asphalt", 0], objName: "asphalt1" });
     addGameObject({ x: 0, y: 250, sizex: EntityEngine.canvas.width, sizey: 125, tag: "asphalt", sprite: ["highway", 0], objName: "asphalt" });
+    addGameObject({ x: 0, y: 400, sizex: EntityEngine.canvas.width, sizey: 25, tag: "bound", sprite: ["asphalt", 0], objName: "bound-bottomarea" });
     //
     addGameObject({ x: 0, y: 50, sizex: EntityEngine.canvas.width, sizey: 200, tag: "water", sprite: ["water", 0], objName: "water1" });
     addGameObject({ x: 0, y: 375, sizex: EntityEngine.canvas.width, sizey: 25, tag: "safe-zone", sprite: ["safe-zone", 0], objName: "safezone-bottom" });
@@ -196,15 +243,14 @@ function LoadGameObjects() {
 // used to load in all sprites and materials at the start of the game
 function LoadSpriteData() {
     // Animated sprites:
-    
-    addSpriteTiles({ objTag: "player", list: [14], isMaterial: false, isAnimated: true });
+    addSpriteTiles({ objTag: "player", list: [1], isMaterial: false, isAnimated: true });
     addSpriteTiles({ objTag: "turtlyanim_right", list: [15, 16, 15, 16], isMaterial: false, isAnimated: true });
     addSpriteTiles({ objTag: "turtlyanim_left", list: [17, 18, 17, 18], isMaterial: false, isAnimated: true });
+    addSpriteTiles({ objTag: "turtly_bad_right", list: [32, 33, 34, 35, 36, 35, 34, 33, 32, 15], isMaterial: false, isAnimated: true });
+    addSpriteTiles({ objTag: "turtly_bad_left", list: [37, 38, 39, 40, 41, 40, 39, 38, 37, 18], isMaterial: false, isAnimated: true });
     
     // Normal sprites:
     addSpriteTiles({ objTag: "water", start: 30, middle: [30], end: 30, isMaterial: false, isAnimated: false });
-    //
-    addSpriteTiles({ objTag: "turtly_bad", start: 1, middle: [1], end: 1, isMaterial: false, isAnimated: false });
     //
     addSpriteTiles({ objTag: "car_blue_left", start: 22, middle: [22], end: 22, isMaterial: false, isAnimated: false });
     addSpriteTiles({ objTag: "truck", start: 27, middle: [26], end: 26, isMaterial: false, isAnimated: false });
@@ -220,7 +266,7 @@ function LoadSpriteData() {
     addSpriteTiles({ objTag: "score-disabled", start: 20, middle: [20], end: 20, isMaterial: false, isAnimated: false });
     addSpriteTiles({ objTag: "safe-zone", start: 2, middle: [2], end: 2, isMaterial: false, isAnimated: false });
     //
-    addSpriteTiles({ objTag: "bound", start: 3, middle: [5,4,7,3,5,4,7,5,4,7,5,4,7,3,5,4,7,1], end: 3, isMaterial: false, isAnimated: false });
+    addSpriteTiles({ objTag: "bound", start: 3, middle: [5,4,7,3,5,4,7,5,4,7,5,4,7,3,5,4,7,3], end: 3, isMaterial: false, isAnimated: false });
     addSpriteTiles({ objTag: "bound2", start: 4, middle: [3], end: 6, isMaterial: false, isAnimated: false });
     addSpriteTiles({ objTag: "bound3", start: 8, middle: [4], end: 6, isMaterial: false, isAnimated: false });
     addSpriteTiles({ objTag: "bound4", start: 8, middle: [3], end: 6, isMaterial: false, isAnimated: false });
@@ -278,6 +324,49 @@ function scoreTimer() {
         scoreUp.uptime = 0;
         EntityEngine.gameObjectStorage[gameObjectLookUp("scoreup200")][0].x = -50;
         EntityEngine.gameObjectStorage[gameObjectLookUp("scoreup200")][0].y = -50;
+    }
+    if (playerdeath.active == true) {
+        playerdeath.uptime++;
+        playerData.spriteIndex = 31;
+    }
+    if (playerdeath.uptime > 1)
+    {
+        respawnPlayer();
+        resetTimer();
+        playerdeath.active = false;
+        playerdeath.uptime = 0;
+        playerData.spriteIndex = 14;
+        EntityEngine.engineExecutionEnabled = true;
+    }
+    if(turtleData.enabled == true){
+        turtleData.countTilEn++;
+    }
+    if (turtleData.countTilEn == turtleData.time)
+    {
+        if (turtleData.groupID == 1) {
+            let objID = gameObjectLookUp("turtle4");
+            EntityEngine.gameObjectStorage[objID][0].sprite[0] = "turtly_bad_right";
+            EntityEngine.gameObjectStorage[objID][0].sprite[1] = 0;
+            EntityEngine.gameObjectStorage[objID][0].tag = "turtly_bad";
+            objID = gameObjectLookUp("turtle42");
+            EntityEngine.gameObjectStorage[objID][0].sprite[0] = "turtly_bad_right";
+            EntityEngine.gameObjectStorage[objID][0].sprite[1] = 0;
+            EntityEngine.gameObjectStorage[objID][0].tag = "turtly_bad";
+            objID = gameObjectLookUp("turtle43");
+            EntityEngine.gameObjectStorage[objID][0].sprite[0] = "turtly_bad_right";
+            EntityEngine.gameObjectStorage[objID][0].sprite[1] = 0;
+            EntityEngine.gameObjectStorage[objID][0].tag = "turtly_bad";
+        }
+        else if (turtleData.groupID == 2) {
+            let objID = gameObjectLookUp("turtle2");
+            EntityEngine.gameObjectStorage[objID][0].sprite[0] = "turtly_bad_left";
+            EntityEngine.gameObjectStorage[objID][0].sprite[1] = 0;
+            EntityEngine.gameObjectStorage[objID][0].tag = "turtly_bad";
+            objID = gameObjectLookUp("turtle22");
+            EntityEngine.gameObjectStorage[objID][0].sprite[0] = "turtly_bad_left";
+            EntityEngine.gameObjectStorage[objID][0].sprite[1] = 0;
+            EntityEngine.gameObjectStorage[objID][0].tag = "turtly_bad";
+        }
     }
 }
 
@@ -428,6 +517,8 @@ function StartGameScreen() {
 
 function endGameCollapse() {
     //renderObjects();
+    playerData.spriteIndex = 31;
+    renderplayer();
     clearInterval(ScoreTimer);
     AwaitEngineExec(1500);
     EntityEngine.engineExecutionEnabled = false;
@@ -467,9 +558,16 @@ function resetGame() {
     EntityEngine.spriteTiles.length = 0;
     levelUpSpeedIncrease = 0;
     _score = 0;
+    _scoreText = "00000"
     _moveEnabled = true;
     startGameState = true;
+    endGameState = false;
     //
+    playerdeath.active = false;
+    playerdeath.uptime = 0;
+    playerData.spriteIndex = 14;
+    //
+    EntityEngine.engineExecutionEnabled = true;
     //AwaitEngineExec(3500);
     Initialize();
 }

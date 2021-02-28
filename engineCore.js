@@ -11,7 +11,7 @@ var EntityEngine = {
     AnimationTimer: undefined,
     //
     spriteSheet: {
-        spriteSheetSource: "https://raw.githubusercontent.com/Xerren09/Frogger/main/assets/spritesheet.png", // ./spritesheet.png
+        spriteSheetSource: "https://raw.githubusercontent.com/Xerren09/Frogger/main/assets/spritesheet.png", // ./spritesheet.png //https://raw.githubusercontent.com/Xerren09/Frogger/main/assets/spritesheet.png
         tileSize: 25,
         height: 25,
         width: 25, 
@@ -28,6 +28,7 @@ var EnginePerformance = {
     executionCount: 0,
     operationStart: 0,
     operationEnd: 0,
+    EnginePerformanceDisplayEnabled: false,
     startTimer: function() {
         EnginePerformance.operationStart = performance.now();
     },
@@ -47,15 +48,15 @@ var EnginePerformance = {
 };
 //
 var playerData = { 
-    x: 225, 
-    y: 375, 
+    x: 225,
+    y: 375,
     sizex: EntityEngine.spriteSheet.tileSize, 
     sizey: EntityEngine.spriteSheet.tileSize, 
     step: 25, 
     lives: 3, 
     remainingLives: 3, 
     spriteTag: "player",
-    spriteIndex: 14
+    spriteIndex: 14,
 };
 //
 var _obstacles = [
@@ -80,7 +81,7 @@ var _overrides = [
 function InitializeEngine() {
     EntityEngine.canvas = document.getElementById("gameArea");
     EntityEngine.renderer = EntityEngine.canvas.getContext("2d");
-    EntityEngine.playerRenderer = EntityEngine.canvas.getContext("2d");
+    //
     // loads in graphics
     initializeGraphicsEngine();
     // loads in set variables from the script.js file
@@ -91,7 +92,6 @@ function InitializeEngine() {
     // this first call starts the core update loop which runs all the internal game logic
     //CoreUpdateLoop();
 }
-
 
 // Core update loop for calculations done every milliseconds specified.
 // This loop is regulated! All calculations done here will be executed after the specified interval has elapsed.
@@ -115,9 +115,16 @@ function CoreUpdateLoop() {
             Update();
         }
         catch {  /* function is not present */ }
-        _moveEnabled = true;
-        renderObjects();
         gameObjectBoundCheck([playerData.x, playerData.y]);
+        _moveEnabled = true;
+        if (EntityEngine.engineExecutionEnabled == true) {
+            renderObjects();
+            
+        }
+        //window.requestAnimationFrame(CoreUpdateLoop); 
+    }
+    if (endGameState == false)
+    {
         window.requestAnimationFrame(CoreUpdateLoop); 
     }
 }
@@ -162,7 +169,7 @@ function initializeGraphicsEngine() {
         EntityEngine.spriteSheet.width = this.width;
     }
     //
-    EntityEngine.playerRenderer.drawImage(EntityEngine.spriteSheet.img, 0, 0);
+    EntityEngine.renderer.drawImage(EntityEngine.spriteSheet.img, 0, 0);
 }
 
 function collisionPenalty() {
@@ -235,18 +242,16 @@ function renderObjects() {
     //
     renderplayer();
     //
-    EnginePerformance.endTimer();
+    if (EntityEngine.EnginePerformanceDisplayEnabled == true)
+    {
+        EnginePerformance.endTimer();
+    }
 }
 
 function renderplayer() {
-    EntityEngine.spriteTiles.forEach(element => {
-        if (element[0].objTag == playerData.spriteTag) {
-            let tsize = EntityEngine.spriteSheet.tileSize;
-            let spriteSheetLocation = spriteSheetIndexer(parseInt(playerData.spriteIndex));
-            EntityEngine.renderer.drawImage(EntityEngine.spriteSheet.img, spriteSheetLocation.columnIndex, spriteSheetLocation.rowIndex, tsize, tsize, playerData.x, playerData.y, tsize, tsize);
-            return;
-        }
-    });
+    let tsize = EntityEngine.spriteSheet.tileSize;
+    let spriteSheetLocation = spriteSheetIndexer(parseInt(playerData.spriteIndex));
+    EntityEngine.renderer.drawImage(EntityEngine.spriteSheet.img, spriteSheetLocation.columnIndex, spriteSheetLocation.rowIndex, tsize, tsize, playerData.x, playerData.y, tsize, tsize);
 }
 
 // creates a list of Indexes of the sprites making up the gameObject
@@ -361,17 +366,24 @@ function collisionEventHandler(pos) {
 // Main collision validator, checks if the player's coordinate is inside any other gameObject
 function gameObjectBoundCheck(pos) {
     let collision = false;
+    // Some modification to the player size so the hitboxes are more forgiving.
+    let modifiedX = playerData.sizex - 20;
+    let modifiedPosX = pos[0] + 10;
+    //
     EntityEngine.gameObjectStorage.forEach(element => {
-        if (element[0].x < pos[0] + playerData.sizex && element[0].x + element[0].sizex > pos[0] && element[0].y < pos[1] + playerData.sizey && element[0].y + element[0].sizey > pos[1])
+        if (element[0].x < modifiedPosX + modifiedX && element[0].x + element[0].sizex > modifiedPosX && element[0].y < pos[1] + playerData.sizey && element[0].y + element[0].sizey > pos[1])
         {
             // collision between player and another object
             if (obstacleCollisionOverride(pos) == false) {
                 // collision wasn't overridden
                 if (ObstacleCheck(element[0].tag) == true) {
                     // object the collision happened with is an obstacle
-                    collision = true;
-                    collisionPenalty();
-                    return;
+                    if (collision == false)
+                    {
+                        collision = true;
+                        collisionPenalty();
+                        //return;
+                    }
                 }
             }
             else
@@ -453,7 +465,7 @@ function BoundCheck(pos) {
             break;
     }
     EntityEngine.gameObjectStorage.forEach(element => {
-        if ((element[0].x < pos[0] + playerData.sizex) && (element[0].x + element[0].sizex > pos[0]) && (element[0].y < pos[1] + playerData.y) && (element[0].y + element[0].sizey > pos[1])) {
+        if ((element[0].x < pos[0] + playerData.sizex) && (element[0].x + element[0].sizex > pos[0]) && (element[0].y < pos[1] + playerData.sizey) && (element[0].y + element[0].sizey > pos[1])) {
             if (element[0].tag == "bound") {
                 isAtBound = true;
                 return;
