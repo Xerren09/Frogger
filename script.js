@@ -9,7 +9,7 @@ var scoreUp = {
     uptime: 0,
     enabled: false
 };
-var playerdeath  = { 
+var playerdeath  = {
     active: false,
     uptime: 0
 }
@@ -49,7 +49,7 @@ function Initialize() {
     StartGameScreen();
 }
 
-function Update() {
+function FixedUpdate() {
     if (turtleData.enabled == false){
         turtleData.enabled = true;
         turtleData.countTilEn++;
@@ -248,7 +248,7 @@ function LoadSpriteData() {
     addSpriteTiles({ objTag: "turtlyanim_left", list: [17, 18, 17, 18], isMaterial: false, isAnimated: true });
     addSpriteTiles({ objTag: "turtly_bad_right", list: [32, 33, 34, 35, 36, 35, 34, 33, 32, 15], isMaterial: false, isAnimated: true });
     addSpriteTiles({ objTag: "turtly_bad_left", list: [37, 38, 39, 40, 41, 40, 39, 38, 37, 18], isMaterial: false, isAnimated: true });
-    
+
     // Normal sprites:
     addSpriteTiles({ objTag: "water", start: 30, middle: [30], end: 30, isMaterial: false, isAnimated: false });
     //

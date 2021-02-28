@@ -14,7 +14,7 @@ var EntityEngine = {
         spriteSheetSource: "https://raw.githubusercontent.com/Xerren09/Frogger/main/assets/spritesheet.png", // ./spritesheet.png //https://raw.githubusercontent.com/Xerren09/Frogger/main/assets/spritesheet.png
         tileSize: 25,
         height: 25,
-        width: 25, 
+        width: 25,
         img: undefined
     }
 };
@@ -47,14 +47,14 @@ var EnginePerformance = {
     },
 };
 //
-var playerData = { 
+var playerData = {
     x: 225,
     y: 375,
-    sizex: EntityEngine.spriteSheet.tileSize, 
-    sizey: EntityEngine.spriteSheet.tileSize, 
-    step: 25, 
-    lives: 3, 
-    remainingLives: 3, 
+    sizex: EntityEngine.spriteSheet.tileSize,
+    sizey: EntityEngine.spriteSheet.tileSize,
+    step: 25,
+    lives: 3,
+    remainingLives: 3,
     spriteTag: "player",
     spriteIndex: 14,
 };
@@ -65,7 +65,7 @@ var _obstacles = [
     "car2",
     "car3",
     "car4",
-    "water" 
+    "water"
 ];
 
 var _overrides = [
@@ -103,6 +103,8 @@ function CoreUpdateLoop_Fixed() {
             FixedUpdate();
         }
         catch {  /* function is not present */ }
+
+        _moveEnabled = true;
     }
 }
 
@@ -116,16 +118,13 @@ function CoreUpdateLoop() {
         }
         catch {  /* function is not present */ }
         gameObjectBoundCheck([playerData.x, playerData.y]);
-        _moveEnabled = true;
         if (EntityEngine.engineExecutionEnabled == true) {
             renderObjects();
-            
         }
-        //window.requestAnimationFrame(CoreUpdateLoop); 
     }
     if (endGameState == false)
     {
-        window.requestAnimationFrame(CoreUpdateLoop); 
+        window.requestAnimationFrame(CoreUpdateLoop);
     }
 }
 
@@ -272,7 +271,7 @@ function constructSpriteList(obj) {
                 return;
             }
             else // the sprite is not a material
-            {   
+            {
                 if (element[0].isAnimated == true){ // The sprite is animated
                     spriteList.push(element[0].list[obj[0].sprite[1]]);
                     return;
@@ -322,7 +321,7 @@ function spriteSheetIndexer(indexNum) {
     let returnIndex_row = (rowNumber * EntityEngine.spriteSheet.tileSize);
     let returnIndex_column = (columnNumber * EntityEngine.spriteSheet.tileSize);
     //
-    return { 
+    return {
         rowIndex: returnIndex_row,
         columnIndex: returnIndex_column
     };
@@ -342,11 +341,11 @@ function objTranslate(step, axis, dir, objID) {
     }
     else if (axis == "y")
     {
-        if (dir == "+") 
+        if (dir == "+")
         {
             EntityEngine.gameObjectStorage[objID][0].y -= step;
         }
-        else if (dir == "-") 
+        else if (dir == "-")
         {
             EntityEngine.gameObjectStorage[objID][0].y += step;
         }
