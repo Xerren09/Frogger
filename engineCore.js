@@ -87,7 +87,7 @@ function InitializeEngine() {
     // loads in set variables from the script.js file
     Initialize();
     // sets timers for the for the core update loops FixedUpdate and AnimationLoop
-    EntityEngine.FixedUpdateTimer = window.setInterval(CoreUpdateLoop_Fixed, 20);
+    EntityEngine.FixedUpdateTimer = window.setInterval(CoreUpdateLoop_Fixed, 10);
     EntityEngine.AnimationTimer = window.setInterval(animationLoop, 700);
     // this first call starts the core update loop which runs all the internal game logic
     //CoreUpdateLoop();
@@ -103,7 +103,6 @@ function CoreUpdateLoop_Fixed() {
             FixedUpdate();
         }
         catch {  /* function is not present */ }
-
         _moveEnabled = true;
     }
 }
